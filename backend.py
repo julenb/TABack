@@ -121,6 +121,7 @@ def getEvent(name):
 
 def listen_to_sqs():
     getEvents()
+    print('listeneo')
     try:
         # Recibe el mensaje de SQS
         message = sqs.receive_message(QueueUrl=queue_url_request, AttributeNames=['All'], MaxNumberOfMessages=1, WaitTimeSeconds=10)
@@ -180,17 +181,13 @@ def main():
      while True:
         try:  
             message = sqs.receive_message(QueueUrl=queue_url_token, AttributeNames=['All'], MaxNumberOfMessages=1, WaitTimeSeconds=20)
-            print('token recibido')
-            if 'Messages' in message:
-            # Procesa el mensaje
-                message_body = message['Messages'][0]['Body']
-                
-                # Elimina el mensaje de la cola
-                receipt_handle = message['Messages'][0]['ReceiptHandle']
-                sqs.delete_message(QueueUrl=queue_url_token, ReceiptHandle=receipt_handle)
-                listen_to_sqs()
+            # Elimina el mensaje de la cola
+            receipt_handle = message['Messages'][0]['ReceiptHandle']
+            print('elimino mensaje')
+            sqs.delete_message(QueueUrl=queue_url_token, ReceiptHandle=receipt_handle)
+            listen_to_sqs()
 
-                sqs.send_message(QueueUrl=queue_url_token, MessageBody='token')
+            sqs.send_message(QueueUrl=queue_url_token, MessageBody='token')
 
 
         except Exception as e:
