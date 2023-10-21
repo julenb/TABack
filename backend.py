@@ -174,14 +174,13 @@ def listen_to_sqs():
         else:
             print('Cola Vacía')
     except Exception as e:
-        message_body = f'{{"message": "Fatal_Error"}}'
-        sqs.send_message(QueueUrl=queue_url_response, MessageBody=message_body)
-
+        print('No hay nada en la cola')
 
 def main():
      while True:
         try:  
             message = sqs.receive_message(QueueUrl=queue_url_token, AttributeNames=['All'], MaxNumberOfMessages=1, WaitTimeSeconds=20)
+            print('token recibido')
             if 'Messages' in message:
             # Procesa el mensaje
                 message_body = message['Messages'][0]['Body']
